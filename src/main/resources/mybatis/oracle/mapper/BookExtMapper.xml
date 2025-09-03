@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC  "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="walker.mybatisdaoj.test.dao.BookDao">
+
+    <select id="findBooks" resultType="walker.mybatisdaoj.test.dpo.Book">
+        SELECT book_id,title,price,publish_time
+        FROM book
+        <where>
+            <if test="bookId!= null">
+                AND book_id = #{bookId}
+            </if>
+            <if test="title!= null">
+                AND title like #{title}
+            </if>
+            <if test="minPrice!= null">
+                <![CDATA[  AND  price >= #{minPrice}  ]]>
+            </if>
+            <if test="maxPrice!= null">
+                <![CDATA[  AND  price < #{maxPrice}   ]]>
+            </if>
+            <if test="publishTime!= null">
+                AND publish_time = #{publishTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="findBooksByPrice" resultType="walker.mybatisdaoj.test.dpo.Book">
+        SELECT book_id,title,price,publish_time
+        FROM book
+        <where>
+            <if test="minPrice!= null">
+                <![CDATA[  AND  price >= #{minPrice}  ]]>
+            </if>
+            <if test="maxPrice!= null">
+                <![CDATA[  AND  price < #{maxPrice}   ]]>
+            </if>
+        </where>
+    </select>
+
+    <select id="findEditorAndBooks" resultType="walker.mybatisdaoj.test.dpo.EditorExt">
+        select a.editor_id, a.name as editor_name, a.sex editor_sex, c.book_id,c.title,c.price,c.publish_time
+        from editor a, book_editor b, book c
+        <where>
+            a.editor_id=b.editor_id and b.book_id = c.book_id
+            <if test="title != null">
+                and c.title like #{title}
+            </if>
+            <if test="editorName != null">
+                and a.name like #{editorName}
+            </if>
+        </where>
+    </select>
+
+</mapper>
+

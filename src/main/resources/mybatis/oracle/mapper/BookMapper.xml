@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC  "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="walker.mybatisdaoj.test.dao.BookDao">
+
+    <!-- ============================= INSERT ============================= -->
+    <insert id="save">
+        <selectKey order="BEFORE" keyProperty="bookId" resultType="java.lang.Long">
+            select book_seq.nextval from dual
+        </selectKey>
+        INSERT INTO book( book_id,title,price,publish_time )
+        VALUES ( #{bookId},#{title},#{price},#{publishTime})
+    </insert>
+
+    <insert id="saveBatch">
+        INSERT INTO book( book_id,title,price,publish_time )
+        SELECT book_seq.nextval, a.* from (
+        <foreach collection="list" item="item" index="index" separator="UNION ALL">
+            SELECT #{item.title} as title, #{item.price} as price, #{item.publishTime} as publishTime
+            FROM DUAL
+        </foreach>
+        ) a
+    </insert>
+
+
+    <!-- ============================= UPDATE ============================= -->
+    <update id="update">
+        UPDATE book
+        <set>
+            title = #{title},
+            price = #{price},
+            publish_time = #{publishTime},
+        </set>
+        WHERE book_id = #{bookId} 
+    </update>
+
+    <update id="updateIgnoreNull">
+        UPDATE book
+        <set>
+            <if test="title!= null">title = #{title},</if>
+            <if test="price!= null">price = #{price},</if>
+            <if test="publishTime!= null">publish_time = #{publishTime},</if>
+        </set>
+        WHERE book_id = #{bookId} 
+    </update>
+
+    <update id="updateBatch" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" separator=";" open="begin" close=";end;">
+            UPDATE book
+            <set>
+                title=#{item.title},
+                price=#{item.price},
+                publish_time=#{item.publishTime},
+            </set>
+            WHERE book_id=#{item.bookId} 
+        </foreach>
+    </update>
+
+
+    <!-- ============================= DELETE ============================= -->
+    <delete id="delete">
+        DELETE FROM book
+        WHERE book_id = #{bookId} 
+    </delete>
+
+    <delete id="deleteBatch">
+        DELETE FROM book
+        WHERE
+        <foreach collection="list" item="item" index="index" open="(" separator="OR" close=")">
+            book_id = #{item.bookId} 
+        </foreach>
+    </delete>
+
+    <delete id="deleteByPK">
+        DELETE FROM book
+        WHERE book_id = #{bookId} 
+    </delete>
+
+    <delete id="deleteByPKs">
+        DELETE FROM book
+        WHERE 
+         <foreach collection="collection" item="item" index="index" open="(" separator="OR" close=")">
+            book_id = #{item} 
+        </foreach>
+    </delete>
+
+    <delete id="deleteAll">
+        DELETE FROM book
+    </delete>
+
+
+    <!-- ============================= SELECT ============================= -->
+    <select id="count" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM book
+    </select>
+
+    <select id="findByPK" resultType="walker.mybatisdaoj.test.dpo.Book">
+        SELECT book_id, title, price, publish_time
+         FROM book
+        WHERE book_id = #{bookId} 
+    </select>
+
+    <select id="findByPKs" resultType="walker.mybatisdaoj.test.dpo.Book">
+        SELECT book_id, title, price, publish_time
+         FROM book
+        WHERE 
+        <foreach collection="collection" item="item" index="index" open="(" separator="OR" close=")">
+            book_id = #{item} 
+        </foreach>
+    </select>
+
+    <select id="find" resultType="walker.mybatisdaoj.test.dpo.Book">
+        SELECT book_id, title, price, publish_time
+         FROM book
+        <where>
+            <if test="bookId!= null">
+               AND book_id = #{bookId}
+            </if>
+            <if test="title!= null">
+               AND title like #{title}
+            </if>
+            <if test="price!= null">
+               <![CDATA[  AND price >= #{price}  ]]> 
+            </if>
+            <if test="publishTime!= null">
+               AND TO_CHAR(publish_time,'yyyy-mm-dd') = #{publishTime}
+            </if>
+            <if test="blobContent!= null">
+               AND blob_content = #{blobContent}
+            </if>
+        </where>
+    </select>
+
+</mapper>

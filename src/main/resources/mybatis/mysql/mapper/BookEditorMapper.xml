@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC  "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="walker.mybatisdaoj.test.dao.BookEditorDao">
+
+    <!-- ============================= INSERT ============================= -->
+    <insert id="save" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO book_editor( id,book_id,editor_id )
+        VALUES ( #{id},#{bookId},#{editorId})
+    </insert>
+
+    <insert id="saveBatch">
+        INSERT INTO book_editor( id,book_id,editor_id )
+        VALUES 
+        <foreach collection="list" item="item" index="index" separator=",">
+            ( #{item.id},#{item.bookId},#{item.editorId} )
+        </foreach>
+    </insert>
+
+
+    <!-- ============================= UPDATE ============================= -->
+    <update id="update">
+        UPDATE book_editor
+        <set>
+            book_id = #{bookId},
+            editor_id = #{editorId},
+        </set>
+        WHERE id = #{id} 
+    </update>
+
+    <update id="updateIgnoreNull">
+        UPDATE book_editor
+        <set>
+            <if test="bookId!= null">book_id = #{bookId},</if>
+            <if test="editorId!= null">editor_id = #{editorId},</if>
+        </set>
+        WHERE id = #{id} 
+    </update>
+
+    <update id="updateBatch" parameterType="java.util.List">
+        UPDATE book_editor
+        <set>
+            <foreach collection="list" item="item" index="index" open="book_id= CASE id" close="END" separator=" " >
+                WHEN #{item.id} THEN #{item.bookId}
+            </foreach>,
+            <foreach collection="list" item="item" index="index" open="editor_id= CASE id" close="END" separator=" " >
+                WHEN #{item.id} THEN #{item.editorId}
+            </foreach>,
+        </set>
+        WHERE 
+            <foreach collection="list" separator="or" item="item" index="index">
+                id = #{item.id}
+            </foreach>
+    </update>
+
+
+    <!-- ============================= DELETE ============================= -->
+    <delete id="delete">
+        DELETE FROM book_editor
+        WHERE id = #{id} 
+    </delete>
+
+    <delete id="deleteBatch">
+        DELETE FROM book_editor
+        WHERE
+        <foreach collection="list" item="item" index="index" open="(" separator="OR" close=")">
+            id = #{item.id} 
+        </foreach>
+    </delete>
+
+    <delete id="deleteByPK">
+        DELETE FROM book_editor
+        WHERE id = #{id} 
+    </delete>
+
+    <delete id="deleteByPKs">
+        DELETE FROM book_editor
+        WHERE 
+         <foreach collection="collection" item="item" index="index" open="(" separator="OR" close=")">
+            id = #{item} 
+        </foreach>
+    </delete>
+
+    <delete id="deleteAll">
+        DELETE FROM book_editor
+    </delete>
+
+
+    <!-- ============================= SELECT ============================= -->
+    <select id="count" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM book_editor
+    </select>
+
+    <select id="findByPK" resultType="walker.mybatisdaoj.test.dpo.BookEditor">
+        SELECT id, book_id, editor_id
+         FROM book_editor
+        WHERE id = #{id} 
+    </select>
+
+    <select id="findByPKs" resultType="walker.mybatisdaoj.test.dpo.BookEditor">
+        SELECT id, book_id, editor_id
+         FROM book_editor
+        WHERE 
+        <foreach collection="collection" item="item" index="index" open="(" separator="OR" close=")">
+            id = #{item} 
+        </foreach>
+    </select>
+
+    <select id="find" resultType="walker.mybatisdaoj.test.dpo.BookEditor">
+        SELECT id, book_id, editor_id
+         FROM book_editor
+        <where>
+            <if test="id!= null">
+               AND id = #{id}
+            </if>
+            <if test="bookId!= null">
+               AND book_id = #{bookId}
+            </if>
+            <if test="editorId!= null">
+               AND editor_id = #{editorId}
+            </if>
+        </where>
+    </select>
+
+</mapper>

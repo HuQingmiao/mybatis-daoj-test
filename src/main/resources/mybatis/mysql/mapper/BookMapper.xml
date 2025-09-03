@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC  "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="walker.mybatisdaoj.test.dao.BookDao">
+
+    <!-- ============================= INSERT ============================= -->
+    <insert id="save" useGeneratedKeys="true" keyProperty="bookId" >
+        INSERT INTO book( book_id,title,price,publish_time )
+        VALUES ( #{bookId},#{title},#{price},#{publishTime})
+    </insert>
+
+    <insert id="saveBatch">
+        INSERT INTO book( book_id,title,price,publish_time )
+        VALUES 
+        <foreach collection="list" item="item" index="index" separator=",">
+            ( #{item.bookId},#{item.title},#{item.price},#{item.publishTime} )
+        </foreach>
+    </insert>
+
+
+    <!-- ============================= UPDATE ============================= -->
+    <update id="update">
+        UPDATE book
+        <set>
+            title = #{title},
+            price = #{price},
+            publish_time = #{publishTime},
+            row_version = row_version + 1,
+        </set>
+        WHERE book_id = #{bookId} 
+    </update>
+
+    <update id="updateWithOptiLock">
+        UPDATE book
+        <set>
+            title = #{title},
+            price = #{price},
+            publish_time = #{publishTime},
+            row_version = row_version + 1,
+        </set>
+        WHERE book_id = #{bookId}  and row_version = #{rowVersion} 
+    </update>
+
+    <update id="updateIgnoreNull">
+        UPDATE book
+        <set>
+            <if test="title!= null">title = #{title},</if>
+            <if test="price!= null">price = #{price},</if>
+            <if test="publishTime!= null">publish_time = #{publishTime},</if>
+            row_version = row_version + 1,
+        </set>
+        WHERE book_id = #{bookId} 
+    </update>
+
+    <update id="updateBatch" parameterType="java.util.List">
+        UPDATE book
+        <set>
+            <foreach collection="list" item="item" index="index" open="title= CASE book_id" close="END" separator=" " >
+                WHEN #{item.bookId} THEN #{item.title}
+            </foreach>,
+            <foreach collection="list" item="item" index="index" open="price= CASE book_id" close="END" separator=" " >
+                WHEN #{item.bookId} THEN #{item.price}
+            </foreach>,
+            <foreach collection="list" item="item" index="index" open="publish_time= CASE book_id" close="END" separator=" " >
+                WHEN #{item.bookId} THEN #{item.publishTime}
+            </foreach>,
+            row_version = row_version + 1,
+        </set>
+        WHERE 
+            <foreach collection="list" separator="or" item="item" index="index">
+                book_id = #{item.bookId}
+            </foreach>
+    </update>
+
+
+    <!-- ============================= DELETE ============================= -->
+    <delete id="delete">
+        DELETE FROM book
+        WHERE book_id = #{bookId} 
+    </delete>
+
+    <delete id="deleteBatch">
+        DELETE FROM book
+        WHERE
+        <foreach collection="list" item="item" index="index" open="(" separator="OR" close=")">
+            book_id = #{item.bookId} 
+        </foreach>
+    </delete>
+
+    <delete id="deleteByPK">
+        DELETE FROM book
+        WHERE book_id = #{bookId} 
+    </delete>
+
+    <delete id="deleteByPKs">
+        DELETE FROM book
+        WHERE 
+         <foreach collection="collection" item="item" index="index" open="(" separator="OR" close=")">
+            book_id = #{item} 
+        </foreach>
+    </delete>
+
+    <delete id="deleteAll">
+        DELETE FROM book
+    </delete>
+
+
+    <!-- ============================= SELECT ============================= -->
+    <select id="count" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM book
+    </select>
+
+    <select id="findByPK" resultType="walker.mybatisdaoj.test.dpo.Book">
+        SELECT book_id, title, price, publish_time, row_version
+         FROM book
+        WHERE book_id = #{bookId} 
+    </select>
+
+    <select id="findByPKs" resultType="walker.mybatisdaoj.test.dpo.Book">
+        SELECT book_id, title, price, publish_time, row_version
+         FROM book
+        WHERE 
+        <foreach collection="collection" item="item" index="index" open="(" separator="OR" close=")">
+            book_id = #{item} 
+        </foreach>
+    </select>
+
+    <select id="find" resultType="walker.mybatisdaoj.test.dpo.Book">
+        SELECT book_id, title, price, publish_time, row_version
+         FROM book
+        <where>
+            <if test="bookId!= null">
+               AND book_id = #{bookId}
+            </if>
+            <if test="title!= null">
+               AND title like #{title}
+            </if>
+            <if test="price!= null">
+               <![CDATA[  AND price >= #{price}  ]]> 
+            </if>
+            <if test="publishTime!= null">
+               AND DATE_FORMAT(publish_time,'%Y-%m-%d') = #{publishTime}
+            </if>
+            <if test="blobContent!= null">
+               AND blob_content = #{blobContent}
+            </if>
+            <if test="rowVersion!= null">
+               AND row_version = #{rowVersion}
+            </if>
+        </where>
+    </select>
+
+</mapper>

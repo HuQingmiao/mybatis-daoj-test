@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>walker</groupId>
+    <artifactId>mybatis-daoj-test</artifactId>
+    <version>2.1.0</version>
+
+    <packaging>jar</packaging>
+
+    <properties>
+        <spring-boot.version>3.2.4</spring-boot.version>
+        <spring.version>6.1.5</spring.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.4</version>
+        <relativePath/>
+    </parent>
+
+    <dependencies>
+        <!-- 单元测试 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- 整合 spring, mybatis -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>3.0.3</version> <!-- 与 Spring Boot 3.2.4 兼容的版本 -->
+        </dependency>
+
+        <!-- 请将此jar包deploy到私服上，也可通过以下命令临时install到本地仓库:
+           mvn install:install-file  -Dfile=D:/projects/mybatis-daoj/lib/mybatis-paginator-1.2.8.jar -DgroupId=cn.com.walker -DartifactId=mybatis-paginator  -Dversion=1.2.8  -Dpackaging=jar
+        -->
+        <dependency>
+            <groupId>cn.com.walker</groupId>
+            <artifactId>mybatis-paginator</artifactId>
+            <version>2.1.0-SNAPSHOT</version>
+            <!--            <scope>system</scope>-->
+            <!--            <systemPath>${basedir}/lib/mybatis-paginator-1.2.8.jar</systemPath>-->
+        </dependency>
+
+        <dependency>
+            <groupId>cn.com.walker</groupId>
+            <artifactId>mybatis-daoj</artifactId>
+            <version>2.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.83</version> <!-- 请检查最新版本 -->
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.38</version>
+        </dependency>
+
+        <!-- 数据库驱动 -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.30</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version> <!-- 或 3.12.0 -->
+                <configuration>
+                    <source>21</source>     <!-- JDK 源码版本 -->
+                    <target>21</target>     <!-- 目标字节码版本 -->
+                    <release>21</release>   <!-- 替代 source/target，推荐方式 -->
+                    <encoding>UTF-8</encoding>
+                    <!-- 注解处理器配置（如使用 Lombok） -->
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.32</version>
+                        </path>
+                        <!-- 其他注解处理器（如 MapStruct） -->
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+

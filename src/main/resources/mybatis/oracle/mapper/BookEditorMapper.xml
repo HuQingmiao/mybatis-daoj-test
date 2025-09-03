@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC  "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="walker.mybatisdaoj.test.dao.BookEditorDao">
+
+    <!-- ============================= INSERT ============================= -->
+    <insert id="save">
+        INSERT INTO book_editor( book_id,editor_id )
+        VALUES ( #{bookId},#{editorId})
+    </insert>
+
+    <insert id="saveBatch">
+        INSERT INTO book_editor( book_id,editor_id )
+        <foreach collection="list" item="item" index="index" separator="UNION ALL">
+            SELECT #{item.bookId},#{item.editorId} 
+              FROM DUAL 
+        </foreach>
+    </insert>
+
+
+    <!-- ============================= UPDATE ============================= -->
+    <update id="update">
+        UPDATE book_editor
+        <set>
+        </set>
+        WHERE editor_id = #{editorId} AND book_id = #{bookId} 
+    </update>
+
+    <update id="updateIgnoreNull">
+        UPDATE book_editor
+        <set>
+        </set>
+        WHERE editor_id = #{editorId} AND book_id = #{bookId} 
+    </update>
+
+    <update id="updateBatch" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" separator=";" open="begin" close=";end;">
+            UPDATE book_editor
+            <set>
+            </set>
+            WHERE editor_id=#{item.editorId} AND book_id=#{item.bookId} 
+        </foreach>
+    </update>
+
+
+    <!-- ============================= DELETE ============================= -->
+    <delete id="delete">
+        DELETE FROM book_editor
+        WHERE editor_id = #{editorId} AND book_id = #{bookId} 
+    </delete>
+
+    <delete id="deleteBatch">
+        DELETE FROM book_editor
+        WHERE
+        <foreach collection="list" item="item" index="index" open="(" separator="OR" close=")">
+            editor_id = #{item.editorId} AND book_id = #{item.bookId} 
+        </foreach>
+    </delete>
+
+    <delete id="deleteByPK">
+        DELETE FROM book_editor
+        WHERE editor_id = #{editorId} AND book_id = #{bookId} 
+    </delete>
+
+    <delete id="deleteAll">
+        DELETE FROM book_editor
+    </delete>
+
+
+    <!-- ============================= SELECT ============================= -->
+    <select id="count" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM book_editor
+    </select>
+
+    <select id="findByPK" resultType="walker.mybatisdaoj.test.dpo.BookEditor">
+        SELECT book_id, editor_id
+         FROM book_editor
+        WHERE editor_id = #{editorId} AND book_id = #{bookId} 
+    </select>
+
+    <select id="find" resultType="walker.mybatisdaoj.test.dpo.BookEditor">
+        SELECT book_id, editor_id
+         FROM book_editor
+        <where>
+            <if test="bookId!= null">
+               AND book_id = #{bookId}
+            </if>
+            <if test="editorId!= null">
+               AND editor_id = #{editorId}
+            </if>
+        </where>
+    </select>
+
+</mapper>
