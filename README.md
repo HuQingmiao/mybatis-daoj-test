@@ -1,5 +1,5 @@
 ﻿### 项目说明
-  Mybatis-daoj-test，用于测试mybatis-daoj生成的代码是否可正常工作。 
+  Mybatis-daoj-test，用于示范mybatis-daoj的各种用法，也便于我测试它的新增特性。 
 
 
 ### 测试说明
