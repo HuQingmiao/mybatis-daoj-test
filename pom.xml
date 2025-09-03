@@ -47,7 +47,7 @@
            mvn install:install-file  -Dfile=D:/projects/mybatis-daoj/lib/mybatis-paginator-1.2.8.jar -DgroupId=cn.com.walker -DartifactId=mybatis-paginator  -Dversion=1.2.8  -Dpackaging=jar
         -->
         <dependency>
-            <groupId>cn.com.walker</groupId>
+            <groupId>walker</groupId>
             <artifactId>mybatis-paginator</artifactId>
             <version>2.1.0-SNAPSHOT</version>
             <!--            <scope>system</scope>-->
@@ -55,7 +55,7 @@
         </dependency>
 
         <dependency>
-            <groupId>cn.com.walker</groupId>
+            <groupId>walker</groupId>
             <artifactId>mybatis-daoj</artifactId>
             <version>2.1.0-SNAPSHOT</version>
         </dependency>
